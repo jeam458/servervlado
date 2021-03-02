@@ -1,0 +1,43 @@
+<div class="container col-md-12 col-md-offset-0">
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard" style="margin: -2px 5px 10px 10px;float: left; "></i>Insertar padron de electores</legend>
+    <div class="has-feedback">
+        <div class="form-group col-md-12">
+          <input type="text" class="form-control col-md-5" placeholder="Buscar elector" ng-model="searchText"/>
+          <span class="glyphicon glyphicon-search form-control-feedback" style="margin: -5px 10px 10px 10px;float: left; "></span>
+        </div>
+        <div class="form-group col-md-8 col-md-offset-0">
+          <input type="file"   class="btn btn-secondary" ngf-select="SelectFile($file)" />
+          <hr />
+        </div>
+        <div class="form-group col-md-4 col-md-offset-0">
+            <input type="button" class="btn btn-primary" value="send mails" ng-click="enviarcorreos()" />
+        </div>
+      </div>
+      <div class="form-group col-md-12 col-md-offset-0">
+        <h4>Los integrantes del padron</h4>
+        <div style="overflow-x:auto;">
+          <table class="table-rwd">
+            <thead>
+              <tr class="success">
+                  <th>NOMBRES</th>
+                  <th>CARGO</th>
+                  <th>DNI</th>
+                  <th>CORREO</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tbody ng-repeat="m in Electores |filter:searchText">
+                  <tr>
+                      <td>{{m.NOMBRES}}</td>
+                      <td>{{m.CARGO}}</td>
+                      <td>{{m.DNI}}</td>
+                      <td>{{m.CORREO}}</td>
+                  </tr>
+              </tbody>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</div>

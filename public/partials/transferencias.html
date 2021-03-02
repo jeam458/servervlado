@@ -1,0 +1,269 @@
+<div class="container col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Transferencias</strong>
+            <button class="btn btn-success pull-right" ng-click="listTransferencias()" style="margin: -9px -13px 12px -10px;float: right; "><span class="fa fa-refresh"  style="margin: +1px 5px 5px 5px;float: right; "  aria-hidden="true"></span></button>
+            <button type="submit" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addModal" ng-click="agregar()" style="margin: -9px 11px -12px -10px;float: left; ">Transferencia<span class="glyphicon glyphicon-plus pull-left" style="margin: +1px 5px 5px 0px;float: right; "></span></button>
+            <button type="submit" class="btn btn-info pull-right" data-toggle="modal" data-target="#addModal" ng-click="agregarpedido()" style="margin: -9px 11px -12px -10px;float: left; ">Pedido<span class="glyphicon glyphicon-plus pull-left" style="margin: +1px 5px 5px 0px;float: right; "></span></button>
+        </div>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--<div class="form-group col-md-6 col-md-offset-6 pull-right">
+                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Agregar Stock</button>
+                        <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Transferir Productos</button>
+                    </div>-->
+                    <div class=" form-group  col-md-12 ">
+                        <h4>Listado del las transferencias entre sucursales</h4>
+                        <div class="form-group col-md-6">
+                            <label class="control-label">Sucursal</label>
+                            <select class="form-control" ng-model="Sucursal1">
+                                  <option style="display:none" value="">seleccionar Sucursal</option>
+                                  <!--<option style="display:none" value=""><input type="text" class="form-control" placeholder="Buscar contratante" ng-model="searchText1"> </input></option>-->
+                                  <option ng-repeat="option in select_sucursal.availableOptions" value="{{option.Nombre}}">{{option.Nombre}}</option>
+                          </select>
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label">Transferencia a Buscar</label>
+                            <input type="text" class="form-control col-md-5" placeholder="Buscar transferencia" ng-model="searchText" />
+
+                        </div>
+                        <!--<div class="form-group col-md-2">
+                          <label class="control-label">Listar Productos</label>
+                          <button type="submit" class="btn btn-primary" ng-click="reiniciar()">Listar Productos</button>
+                      </div>-->
+                    </div>
+                    <div class=" form-group  col-md-12 " style="overflow-x:auto;">
+                        <table class="table-rwd">
+                            <thead>
+                                <tr class="success">
+                                    <th ng-repeat="cabecera in cabecera">{{cabecera}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr dir-paginate="sc in transferencias | orderBy:'-CodTransferencia -Estado' |filter:searchText |filter:Sucursal1 | itemsPerPage: pageSize " current-page="currentPage1" pagination-id="mealsPagination1" >
+                                <!--<tr ng-repeat="sc in transferencias | orderBy:'-CodTransferencia -Estado' |filter:searchText |filter:Sucursal1  ">-->
+                                    <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                                    <td>{{sc.CodTransferencia}}</td>
+                                    <td>{{sc.fecha| date:'medium'}}</td>
+                                    <td>Desde {{sc.Suc1Nombre}} a {{sc.Suc2Nombre}}</td>
+                                    <td>{{sc.NombreEmisor}}</td>
+                                    <td>{{sc.NombreReceptor}}</td>
+                                    <td ng-show="sc.NombreSucursal">{{sc.NombreSucursal}}</td>
+                                    <td ng-style="calculateStyle(sc.Estado)">{{estado_transferencia.availableOptions[sc.Estado].name}}</td>
+                                    <td>
+                                        <button class="btn btn-primary" data-toggle="modal" ng-click="udprecibidoprod(sc)" ng-show="mostraraceptar(sc)"><span class="fa fa-check"  style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>
+                                        <button class="btn btn-success" ng-click="generarpdf(sc)"><span class="fa fa-print" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(sc)"><span class="fa fa-pencil" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                        <button class="btn btn-danger" ng-click="deltransferenciaproducto(sc)" ng-show="mostraraceptar(sc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination total-items="totalItems1" ng-model="currentPage1"  
+                                          max-size="5" boundary-links="true"  
+                                          items-per-page="numPerPage" class="pagination-sm">  
+                        </pagination> 
+                    </div>
+                    <div class="modal  fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <!-- Header -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                                    <h4 class="modal-title">{{encabezado}}</h4>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body">
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Sucursal Emisora</label>
+                                        <select class="form-control" ng-model="transferencia.Sucursal1" ng-change="sucnombre1(transferencia.Sucursal1)">
+                                              <option style="display:none" value="">seleccionar Sucursal</option>
+                                              <option ng-repeat="option in select_sucursal.availableOptions |filter:searchText1" value="{{option._id}}">{{option.Nombre}}</option>
+                                      </select>
+                                        <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Sucursal Receptora</label>
+                                        <select class="form-control" ng-model="transferencia.Sucursal2" ng-change="sucnombre2(transferencia.Sucursal2)">
+                                              <option style="display:none" value="">seleccionar Sucursal</option>
+                                              <option ng-repeat="option in select_sucursal.availableOptions |filter:searchText1" value="{{option._id}}">{{option.Nombre}}</option>
+                                      </select>
+                                        <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Personal Emisor</label>
+                                        <select class="form-control" ng-model="transferencia.IdEmisor" ng-change="EmisorNombre(transferencia.IdEmisor)">
+                                              <option style="display:none" value="">seleccionar Responsable</option>
+                                              <option ng-repeat="option in select_usuario.availableOptions |filter:searchText1" value="{{option._id}}">{{option.nombres}} {{option.apellidos}}</option>
+                                      </select>
+                                        <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Personal Receptor</label>
+                                        <select class="form-control" ng-model="transferencia.IdReceptor" ng-change="ReceptorNombre(transferencia.IdReceptor)">
+                                              <option style="display:none" value="">seleccionar Responsable</option>
+                                              <option ng-repeat="option in select_usuario.availableOptions |filter:searchText1" value="{{option._id}}">{{option.nombres}} {{option.apellidos}}</option>
+                                      </select>
+                                        <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                    </div>
+                                    <!--<div class="form-group col-md-6">
+                                        <label class="control-label">Vendedor</label>
+                                        <input disabled="true" type="text" class="form-control col-md-5" placeholder="Vendedor" ng-model="venta.NombreVendedor">
+                                        </input>
+                                    </div>-->
+
+                                    <div role="tabpanel">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#uploadTab" aria-controls="uploadTab" role="tab" data-toggle="tab">Seleccionar Productos</a>
+
+                                            </li>
+                                            <li role="presentation"><a href="#browseTab" aria-controls="browseTab" role="tab" data-toggle="tab">productos en transferencia</a>
+
+                                            </li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="uploadTab">
+                                                <form name="clienteForm" method="post">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-12">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">
+                                                                    <h3 class="panel-title">{{encabProd}}</h3>
+                                                                </div>
+                                                                <div class="panel-body">
+                                                                    <div class="form-group">
+                                                                        <div class="form-group col-md-12">
+                                                                            <label class="control-label">Buscar Producto</label>
+                                                                            <input type="text" class="form-control col-md-5" placeholder="Buscar producto" ng-model="searchText1">
+                                                                            </input>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;" ng-show="showtabla">
+                                                                        <table class="table-rwd">
+                                                                            <thead>
+                                                                                <tr class="success">
+                                                                                    <th>Agregar</th>
+                                                                                    <th>Codigo Barra</th>
+                                                                                    <th>Producto</th>
+                                                                                    <th>Estado</th>
+
+                                                                                    <th>Precio</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr dir-paginate="dc in stockproductos | orderBy:'+Nombre'  |filter:searchText1 |filter:transferencia.Sucursal1 | itemsPerPage: pageSize" current-page="currentPage" pagination-id="mealsPagination" >
+                                                                                <!--<tr ng-repeat="dc in stockproductos | orderBy:'+Nombre'  |filter:searchText1 |filter:transferencia.Sucursal1">-->
+                                                                                    <td><button class="btn btn-warning" ng-disabled="ocultar(dc.EstadoStock)" ng-click="procesaProd(dc)">+</button></td>
+                                                                                    <td><label ng-show="dc.CodProducto">{{dc.CodProducto}}</label><br><label ng-show="dc.CodigoBarra">{{dc.CodigoBarra}}</label><br><label ng-show="dc.Codigo">{{dc.Codigo}}</label></td>
+
+                                                                                    <td>{{dc.Nombre}}</td>
+                                                                                    <td ng-style="calculateStyle(dc.EstadoStock)">{{estado_stock.availableOptions[dc.EstadoStock].name}}</td>
+                                                                                    <td ng-show="!dc.Sucursal">{{dc.Sucursal}}</td>
+
+                                                                                    <td>{{dc.PV}}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="6" ng-show="stockproductos.length==0">
+                                                                                        <small><i>no exite ningun Producto!</i></small>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <pagination total-items="totalItems" ng-model="currentPage"  
+                                                                                    max-size="5" boundary-links="true"  
+                                                                                    items-per-page="numPerPage" class="pagination-sm">  
+                                                                        </pagination> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="browseTab">
+
+                                                <form name="clienteForm" method="post">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-12">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">
+                                                                    <h3 class="panel-title">REALIZAR TRANSFERENCIA</h3>
+                                                                </div>
+                                                                <div class="panel-body">
+
+                                                                    <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;" ng-show="showtabla" id="transferidoss">
+                                                                        <table class="table-rwd">
+                                                                            <thead>
+                                                                                <tr class="success">
+                                                                                    <th>Codigo</th>
+                                                                                    <th>Nombre</th>
+                                                                                    <th>UMedida</th>
+                                                                                    <th>Estado</th>
+                                                                                    <th>Acciones</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="dc in variosproductos | orderBy:'+Nombre'">
+                                                                                    <td><label ng-show="dc.CodProducto">{{dc.CodProducto}}</label><br><label ng-show="dc.CodigoBarra">{{dc.CodigoBarra}}</td>
+                                                                                <td>{{dc.Nombre}}</td>
+                                                                                <td>{{dc.UMedida}}</td>
+                                                                                <td ng-style="calculateStyle(sc.EstadoStock)">{{estado_stock.availableOptions[dc.EstadoStock].name}}</td>
+                                                                                <td><button class="btn btn-primary" ng-click="elementorecibido(dc)" ng-show="mostraraceptados(dc)"><span class="fa fa-check"  style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>
+                                                                                    <button class="btn btn-danger" ng-click="eliminar(dc)" ng-show="mostraraceptados(dc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td colspan="4" ng-show="variosproductos.length==0">
+                                                                                    <small><i>no exite ningun Producto!</i></small>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="cancelar()">Cancelar</button>
+                                <button type="button" class="btn btn-primary" ng-click="addTransferencia()" ng-show="booladd" ng-disabled="false" data-dismiss="modal">Enviar Transferencia</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="confirmados()" ng-show="boolconf" >Confirmar transferencia</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updTransferenciaproducto()" ng-show="boolupd" ng-disabled="false">Actualizar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="text-center">
+    <!-- <a class="btn btn-default" href="#"><i class="ion-social-github"></i> GoPlanr project</a>-->
+</div>
+</div>

@@ -1,0 +1,155 @@
+<div class="container col-md-12 col-md-offset-0">
+
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard" style="margin: -2px 5px 10px 10px;float: left; "></i>Lista de Proveedores</legend>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+        <div>
+
+        </div>
+        <div class="has-feedback">
+            <div class=" form-group  col-md-8 ">
+                <input type="text" class="form-control col-md-5" placeholder="Buscar Proveedor" ng-model="searchText">
+                </input>
+                <span class="glyphicon glyphicon-search form-control-feedback" style="margin: -5px 10px 10px 10px;float: left; "></span>
+            </div>
+            <div class="form-group col-md-4 col-md-offset-0">
+                <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Agregar Nuevo Proveedor</button>
+            </div>
+        </div>
+
+        <h4>Listado de todos los Proveedores</h4>
+
+        <div style="overflow-x:auto;">
+            <table class="table-rwd">
+                <thead>
+                    <tr class="success">
+                        <th ng-repeat="cabecera in cabecera_proveedor">{{cabecera}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="pr in proveedores | orderBy:'+Nombre && Estado'|filter:searchText">
+                        <td><label ng-show="pr.Dni">{{pr.Dni}}</label><br><label ng-show="pr.Ruc">{{pr.Ruc}}</label></td>
+                        <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                        <td>{{pr.Nombre}}</td>
+                        <td ng-show="pr.Gerente">{{pr.Gerente}}</td>
+                        <td ng-show="pr.AP">{{pr.AP}}</td>
+                        <td>{{pr.AM}}</td>
+                        <td>Persona {{tipo_persona.availableOptions[pr.tipo].name}}</td>
+                        <td>{{estado_persona.availableOptions[pr.Estado].name}}</td>
+                        <td>{{pr.fecha| date : format : timezone}}</td>
+                        <td><button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(pr)">Editar</button></td>
+                        <td><button class="btn btn-danger" ng-click="delProveedor(pr)">Eliminar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                        <h4 class="modal-title">{{encabezado}}</h4>
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form name="clienteForm" method="post">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Tipo Proveedor</label>
+                                    <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_persona.availableOptions track by option.id" ng-model="tipo_persona.selectedOption" ng-change="changeProveedor()"></select>
+                                    <p ng-show="" class="text-danger">Selecciona el tipo de proveedor.</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Estado Proveedor</label>
+                                    <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in estado_persona.availableOptions track by option.id" ng-model="estado_persona.selectedOption"></select>
+                                    <p ng-show="" class="text-danger">Selecciona el tipo de proveedor.</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fEmpresa">
+                                    <label class="control-label">RUC</label>
+                                    <input type="Number" name="RUC" class="form-control" ng-model="proveedor.Ruc" required/>
+                                    <p ng-show="clienteForm.RUC.$invalid && !cliente.RUC.$pristine && !fPersona" class="text-danger">Escriba el Numero de RUC</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fPersona">
+                                    <label class="control-label">DNI</label>
+                                    <input type="Number" name="DNI" class="form-control" ng-model="proveedor.Dni" required/>
+                                    <p ng-show="clienteForm.DNI.$invalid && !cliente.DNI.$pristine && !fEmpresa" class="text-danger">Escriba el Numero de DNI</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fConRuc">
+                                    <label class="control-label">RUC</label>
+                                    <input type="Number" name="RUC1" class="form-control" ng-model="proveedor.Ruc" required/>
+                                    <p ng-show="clienteForm.RUC1.$invalid && !cliente.RUC1.$pristine && !fEmpresa" class="text-danger">Escriba el Numero de RUC</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fEmpresa">
+                                    <label class="control-label">Empresa</label>
+                                    <input type="text" name="empresa" class="form-control" ng-model="proveedor.Nombre" required/>
+                                    <p ng-show="clienteForm.empresa.$invalid && !cliente.empresa.$pristine && !fPersona" class="text-danger">Escriba el nombre de la empresa</p>
+                                </div>
+                                <div class="form-group col-md-12" ng-show="fEmpresa">
+                                    <label class="control-label">Nombre Gerente</label>
+                                    <input type="text" name="gerente" class="form-control" ng-model="proveedor.Gerente" required/>
+                                    <p ng-show="clienteForm.gerente.$invalid && !cliente.gerente.$pristine && !fPersona" class="text-danger">Escriba el nombre del gerente</p>
+                                </div>
+
+                                <div class="form-group col-md-6" ng-show="fPersona">
+                                    <label class="control-label">Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" ng-model="proveedor.Nombre" required/>
+                                    <p ng-show="clienteForm.nombre.$invalid && !cliente.nombre.$pristine && !fEmpresa" class="text-danger">Escriba un nombre</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fPersona">
+                                    <label class="control-label">Apellido Paterno</label>
+                                    <input type="text" name="AP" class="form-control" ng-model="proveedor.AP" required/>
+                                    <p ng-show="clienteForm.AP.$invalid && !cliente.AP.$pristine && !fEmpresa" class="text-danger">Falta apellido paterno</p>
+                                </div>
+                                <div class="form-group col-md-6" ng-show="fPersona">
+                                    <label class="control-label">Apellido Materno</label>
+                                    <input type="text" name="AM" class="form-control" ng-model="proveedor.AM" required/>
+                                    <p ng-show="clienteForm.AM.$invalid && !cliente.AM.$pristine && !fEmpresa" class="text-danger">Falta apellido materno</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Dirección</label>
+                                    <input type="text" name="direccion" class="form-control" ng-model="proveedor.Direccion" required/>
+                                    <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta dirección</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Referencia</label>
+                                    <input type="text" name="direccion" class="form-control" ng-model="proveedor.Referencia" required/>
+                                    <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta una referencia</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Celular</label>
+                                    <input type="Number" name="telefono" class="form-control" ng-model="proveedor.Celular" required/>
+                                    <p ng-show="clienteForm.telefono.$invalid && !cliente.telefono.$pristine" class="text-danger">Falta Celular</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Teléfono 1</label>
+                                    <input type="Number" name="telefono2" class="form-control" ng-model="proveedor.Telefono" required/>
+                                    <p ng-show="clienteForm.telefono2.$invalid && !cliente.telefono2.$pristine" class="text-danger">Falta telefono</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Teléfono 2</label>
+                                    <input type="Number" name="telefono3" class="form-control" ng-model="proveedor.Telefono1" required/>
+                                    <p ng-show="clienteForm.telefono3.$invalid && !cliente.telefono3.$pristine" class="text-danger">Falta telefono</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="addProveedor()" ng-show="booladd" ng-disabled="false">Agregar</button>
+                        <!-- clienteForm.$invalid -->
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updProveedor(cl)" ng-show="boolupd" ng-disabled="false">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

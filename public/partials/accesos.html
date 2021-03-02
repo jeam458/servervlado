@@ -1,0 +1,92 @@
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">MAPA DE LOS ACCESOS DE LOS USUARIOS</h3>
+        </div>
+        <div class="panel-body">
+            <div class="loading" ng-show="isProfileLoading">
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+                <div class="loading-bar"></div>
+            </div>
+            <div class="col-md-12 col-md-offset-0">
+                <div class="panel panel-default">
+                    <div gm-info-window="infoWindow">
+                        <img class="volcano img-rounded" ng-src="icono.png" height=40px; width=40px></img>
+                        <h4>{{selectEtno.NombreUsuario}}</h4>
+                        ingreso: {{selectEtno.fecha| date:'medium'}} <br> dispositivo: {{dispositivo}}
+                    </div>
+                    <gm-map gm-map-id="'filterMarkersMap'" gm-map-id="'infoWindows'" gm-center="center" gm-zoom="zoom" gm-map-options="options.map" class="map">
+
+                        <gm-markers gm-objects="people" gm-id="object._id" gm-position="{lat:object.lat , lng: object.lng }" gm-marker-options="getMarkerOptions(object)" gm-marker-options="{ title: object.CodUsuario, clickable: true }" gm-events="markerEvents" gm-on-openinfowindow="selectEtno= object; infoWindow.open(marker.getMap(),marker);"
+                            gm-on-click="triggerOpenInfoWindow(object)">
+                        </gm-markers>
+                    </gm-map>
+                </div>
+            </div>
+
+
+
+            <div class="col-md-4 col-md-offset-0">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">FILTROS</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+
+                            <select class="form-control" required ng-model="filters1._id" ng-change="filterPeople()" ng-options="esp._id as esp.nombres for esp in users">
+                                <option style="display:none" value="">seleccionar usuario</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">NUEVO USUARIO</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+
+                            <button class="btn btn-success btn-block" ui-sref="dashboard.signup">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 col-md-offset-0">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Información</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="well person-list">
+                            <table class="table table-bordered-responsive">
+                                <thead>
+                                    <tr class="success">
+                                        <th>Fecha</th>
+                                        <th>Usuario</th>
+                                        <th>Ver Mapa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="(_id, person) in filteredPeople">
+                                        <td>{{person.fecha | date:'medium'}}</td>
+                                        <td>{{person.NombreUsuario}}</td>
+                                        <td><button class="btn btn-primary" ng-click="triggerOpenInfoWindow(person)">ver
+                                        </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" ng-show="filteredPeople.length!=0">
+                                            <small><i class="text-danger">Para poder visualizar seleccione usuario!</i></small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

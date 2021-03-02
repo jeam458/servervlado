@@ -1,0 +1,208 @@
+<div class="container col-md-12 col-md-offset-0">
+
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard" style="margin: -2px 5px 10px 10px;float: left; "></i>Partidos</legend>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+        <div>
+
+        </div>
+        <div class="has-feedback">
+            <div class="form-group  col-md-8">
+                <input type="text" class="form-control col-md-5" placeholder="Buscar Tarea" ng-model="searchText" />
+                <span class="glyphicon glyphicon-search form-control-feedback" style="margin: -5px 10px 10px 10px;float: left; "></span>
+
+            </div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary" ng-click="addinicio()" data-toggle="modal" data-target="#addModal" ng-click="openAddModal()">Agregar Nuevo Partido</button>
+            </div>
+            <div class="form-group  col-md-12 ">
+                <h4>Listado de todos los Partidos</h4>
+                <div style="overflow-x:auto;">
+                    <table class="table-rwd">
+                        <thead>
+                            <tr class="success">
+                                <th ng-repeat="cabecera in cabecera_partido">{{cabecera}}</th>
+                                <!--<th>Subir o Bajar</th>
+                                <th>Prioridad</th>
+                                <th>Tarea</th>
+                                <th>Responsabe</th>
+                                <th>Fecha</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="partido in partidos | orderBy:'-Nombre' |filter:searchText">
+                                <!--<td><span class="glyphicon glyphicon-circle-arrow-up" ng-hide="tarea.prioridad==2" ng-click="masPrioridad(tarea)"></span><span class="glyphicon glyphicon-circle-arrow-down" ng-hide="tarea.prioridad==0" ng-click="menosPrioridad(tarea)"></span></td>
+                                <td>{{prioridades[tarea.prioridad]}}</td>-->
+                                <td>{{partido.Nombre }}</td>
+                                <td>{{partido.Descripcion}}</td>
+                                <td>{{partido.fecha| date:'medium'}}</td>
+                                <td><button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(partido)">Editar</button></td>
+                                <td><button class="btn btn-danger" ng-click="delPartido(partido)">Eliminar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="exampleModalLabel">{{encabezado}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="partidoForm" method="post">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label">Nombre</label>
+                                    <input type="text" name="Nombre" class="form-control" ng-model="partido.Nombre" required/>
+                                    <p ng-show="partidoForm.Nombre.$invalid && !partidoForm.Nombre.$pristine" class="text-danger">Falta nombre</p>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="control-label">Descripción</label>
+                                    <textarea type="text" name="Descripcion" class="form-control" ng-model="partido.Descripcion" required></textarea>
+                                    <p ng-show="partidoForm.Descripcion.$invalid && !partidoForm.Descripcion.$pristine" class="text-danger">Falta Descripción</p>
+                                </div>
+                                <div class="form-group col-md-12" ng-if="mostrarImg">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Imagen del partido</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <div class="form-group col-md-6">
+
+                                                    <label class="control-label">Imagen</label>
+                                                    <input type="file" id="trigger" class="btn btn-primary btn-block" onchange="angular.element(this).scope().setFile(this)" accept="image/*" nv-file-select uploader="uploader" options="uploadOptions">
+                                                    <br>
+                                                    <button ng-click="subir()" ng-show="imageen" class="btn btn-success btn-block">Subir Imagen</button>
+                                                    <div ng-show="uploader.isHTML5" class="progress" style="margin-top: 0;">
+                                                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+
+                                                    <img ng-src="{{imageen}}" ng-show="imageen" alt="tu imagen" style="height: 100%; width: 100%; position: relative">
+                                                    <!--<img id="photo" src="#" alt="tu imagen" style="height: 40%; width: 60%; position: relative">-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div role="tabpanel">
+                               <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#addInte" aria-controls="addInte" role="tab" data-toggle="tab">Agregar Integrante</a>
+
+                                </li>
+                                <li role="presentation"><a href="#listInte" aria-controls="listInte" role="tab" data-toggle="tab">Lista Integrantes</a>
+
+                                </li>
+                               </ul>
+                               <div class="tab-content">
+                                 <div role="tabpanel" class="tab-pane active" id="addInte">
+                                          <div class="row">
+                                               <div class="form-group col-md-12">
+                                                   <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                             <h3 class="panel-title">Agregar Integrante</h3>
+                                                        </div>
+                                                   
+                                                   <div class="panel-body">
+                                                        <form name="InteForm" method="post">
+                                                            <div class="row">
+                                                                <div class="form-group col-md-6" >
+                                                                    <label class="control-label">DNI</label>
+                                                                    <input type="Number" name="DNI" class="form-control" ng-model="integrante.Dni" ng-change="personaa(integrante.Dni)" required/>
+                                                                    <p ng-show="InteForm.DNI.$invalid && !InteForm.DNI.$pristine && !fEmpresa" class="text-danger">Escriba el Numero de DNI</p>
+                                                                </div>
+                                                                <div class="form-group col-md-6" >
+                                                                    <label class="control-label">Nombre</label>
+                                                                    <input type="text" name="nombre" class="form-control" ng-model="integrante.Nombre" required/>
+                                                                    <p ng-show="InteForm.nombre.$invalid && !InteForm.nombre.$pristine && !fEmpresa" class="text-danger">Escriba un nombre</p>
+                                                                </div>
+                                                                <div class="form-group col-md-6" >
+                                                                    <label class="control-label">Apellido Paterno</label>
+                                                                    <input type="text" name="AP" class="form-control" ng-model="integrante.AP" required/>
+                                                                    <p ng-show="InteForm.AP.$invalid && !InteForm.AP.$pristine && !fEmpresa" class="text-danger">Falta apellido paterno</p>
+                                                                </div>
+                                                                <div class="form-group col-md-6" >
+                                                                    <label class="control-label">Apellido Materno</label>
+                                                                    <input type="text" name="AM" class="form-control" ng-model="integrante.AM" required/>
+                                                                    <p ng-show="InteForm.AM.$invalid && !InteForm.AM.$pristine && !fEmpresa" class="text-danger">Falta apellido materno</p>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                   </div>
+                                                   <div class="panel-footer">
+                                                    <button class="btn btn-warning"  >Cancelar</button>
+                                                    <button class="btn btn-primary"  ng-click="addIntegrante(integrante)">Agregar</button>
+                                                   </div>
+                                                </div>
+                                               </div>
+                                          </div>
+                                 </div>
+                                 <div role="tabpanel" class="tab-pane" id="listInte">
+                                    <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;">
+                                        <table class="table-rwd">
+                                                <thead>
+                                                        <tr class="success">
+                                                            <th>DNI</th>
+                                                            <th>Nombre</th>
+                                                            <th>Paterno</th>
+                                                            <th>Materno</th>
+                                                            <th>Eliminar</th>
+                
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                            <tr ng-repeat="dc in integrantes " current-page="currentPage">
+                                                             <td>{{dc.Dni}}</td>
+                                                             <td>{{dc.Nombre}}</td>
+                                                             <td>{{dc.AP}}</td>
+                                                             <td>{{dc.AM}}</td>
+                                                             <td><button class="btn btn-danger" ng-click="dellIntegrante(dc)">Eliminar</button></td>
+                                                            </tr>
+                                                    </tbody>
+                                        </table>
+                                        <!--<pagination total-items="totalItems" ng-model="currentPage"  
+                                           max-size="5" boundary-links="true"  
+                                           items-per-page="numPerPage" class="pagination-sm">  
+                                         </pagination>--> 
+                                        </div>
+                                 </div>
+                               </div>
+                            </div>
+                            
+                            <!--<div class="has-feedback">
+                                <input type="text" class="form-control" placeholder="Nombre" ng-model="partido.Nombre"  />
+                                <span class="glyphicon glyphicon-tasks form-control-feedback"></span>
+
+                            </div>
+                            <div class="has-feedback">
+                                <input type="text" class="form-control" placeholder="Descripcion" ng-model="partido.Nombre"  />
+                                <span class="glyphicon glyphicon-tasks form-control-feedback"></span>
+                            </div>-->
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default"  data-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-primary" data-dismiss="modal"  ng-click="addPartido()" ng-show="booladd">Agregar</button>
+                        <button class="btn btn-info" data-dismiss="modal" ng-click="updPartido()" ng-show="boolupd">Actualizar</button>
+                        <!--<button class="btn btn-info" id="clearBtn" ng-click="eliminar()">Eliminar</button>--> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

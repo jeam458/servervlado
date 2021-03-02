@@ -1,0 +1,518 @@
+<div class="container col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Ventas</strong>
+            <button type="submit" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addModal" ng-click="agregar()" style="margin: -9px -13px -12px -10px;float: left; ">Nueva Venta<span class="glyphicon glyphicon-plus pull-left" style="margin: +1px 5px 5px 0px;float: right; "></span></button>
+        </div>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--<div class="form-group col-md-6 col-md-offset-6 pull-right">
+                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Agregar Stock</button>
+                        <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Transferir Productos</button>
+                    </div>-->
+                    <div class=" form-group  col-md-12 ">
+                        <h4>Listado del las ventas de los productos</h4>
+                        <div class="form-group col-md-6">
+                            <label class="control-label">Sucursal</label>
+                            <select class="form-control" ng-model="Sucursal1">
+                                  <option style="display:none" value="">seleccionar Sucursal</option>
+                                  <!--<option style="display:none" value=""><input type="text" class="form-control" placeholder="Buscar contratante" ng-model="searchText1"> </input></option>-->
+                                  <option ng-repeat="option in select_sucursal.availableOptions" value="{{option.Nombre}}">{{option.Nombre}}</option>
+                          </select>
+
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="control-label">Venta a Buscar</label>
+                            <input type="text" class="form-control col-md-5" placeholder="Buscar venta" ng-model="searchText"/>
+                        </div>
+
+                        <!--<div class="form-group col-md-2">
+                          <label class="control-label">Listar Productos</label>
+                          <button type="submit" class="btn btn-primary" ng-click="reiniciar()">Listar Productos</button>
+                      </div>-->
+                    </div>
+                    <div class=" form-group  col-md-12 " style="overflow-x:auto;">
+                        <table class="table-rwd">
+                            <thead>
+                                <tr class="success">
+                                    <th ng-repeat="cabecera in cabecera_stockproducto">{{cabecera}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr dir-paginate="sc in ventas | orderBy:'+Nombre' |filter:searchText |filter:Sucursal1 | itemsPerPage: pageSize " current-page="currentPage1" pagination-id="mealsPagination1">
+                                <!--<tr ng-repeat="sc in ventas | orderBy:'+Nombre' |filter:searchText |filter:Sucursal1  ">-->
+                                    <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                                    <td>{{sc.NroFactura}}</td>
+                                    <td>{{sc.fecha| date:'medium'}}</td>
+                                    <td>{{sc.NombreCliente}}</td>
+                                    <td>{{sc.NombreVendedor}}</td>
+                                    <td ng-show="sc.NombreSucursal">{{sc.NombreSucursal}}</td>
+                                    <td ng-style="calculateStyle(sc.Estado)">{{estado_venta.availableOptions[sc.Estado].name}}</td>
+                                    <td>{{sc.Total}}</td>
+                                    <td>
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(sc)"><span class="fa fa-pencil" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                        <!--<button class="btn btn-danger" ng-click="delventaproducto(sc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>-->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination total-items="totalItems1" ng-model="currentPage1"  
+                                          max-size="5" boundary-links="true"  
+                                          items-per-page="numPerPage" class="pagination-sm">  
+                        </pagination> 
+                    </div>
+
+                    <div class="modal fade" id="stack2" tabindex="-1" data-focus-on="input:first" style="display: none;">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <!-- Header -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-toggle="modal" data-dismiss="modal" href="#addModal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                                    <h4 class="modal-title">NUEVO CLIENTE</h4>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body">
+                                    <form name="clienteForm" method="post">
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Tipo Persona</label>
+                                                <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_persona.availableOptions track by option.id" ng-model="tipo_persona.selectedOption" ng-change="changeCliente()"></select>
+                                                <p ng-show="" class="text-danger">Selecciona el tipo de persona.</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fEmpresa">
+                                                <label class="control-label">RUC</label>
+                                                <input type="Number" name="RUC" class="form-control" ng-model="cliente.Ruc" ng-change="juridico(cliente.Ruc)" required/>
+                                                <p ng-show="clienteForm.RUC.$invalid && !cliente.RUC.$pristine && !fPersona" class="text-danger">Escriba el Numero de RUC</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fPersona">
+                                                <label class="control-label">DNI</label>
+                                                <input type="Number" name="DNI" class="form-control" ng-model="cliente.Dni" ng-change="personaa(cliente.Dni)" required/>
+                                                <p ng-show="clienteForm.DNI.$invalid && !cliente.DNI.$pristine && !fEmpresa" class="text-danger">Escriba el Numero de DNI</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fConRuc">
+                                                <label class="control-label">RUC</label>
+                                                <input type="Number" name="RUC1" class="form-control" ng-model="cliente.Ruc" required/>
+                                                <p ng-show="clienteForm.RUC1.$invalid && !cliente.RUC1.$pristine && !fEmpresa" class="text-danger">Escriba el Numero de RUC</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fEmpresa">
+                                                <label class="control-label">Empresa</label>
+                                                <input type="text" name="empresa" class="form-control" ng-model="cliente.Nombre" required/>
+                                                <p ng-show="clienteForm.empresa.$invalid && !cliente.empresa.$pristine && !fPersona" class="text-danger">Escriba el nombre de la empresa</p>
+                                            </div>
+                                            <div class="form-group col-md-12" ng-show="fEmpresa">
+                                                <label class="control-label">Nombre Gerente</label>
+                                                <input type="text" name="gerente" class="form-control" ng-model="cliente.Gerente" required/>
+                                                <p ng-show="clienteForm.gerente.$invalid && !cliente.gerente.$pristine && !fPersona" class="text-danger">Escriba el nombre del gerente</p>
+                                            </div>
+
+                                            <div class="form-group col-md-6" ng-show="fPersona">
+                                                <label class="control-label">Nombre</label>
+                                                <input type="text" name="nombre" class="form-control" ng-model="cliente.Nombre" required/>
+                                                <p ng-show="clienteForm.nombre.$invalid && !cliente.nombre.$pristine && !fEmpresa" class="text-danger">Escriba un nombre</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fPersona">
+                                                <label class="control-label">Apellido Paterno</label>
+                                                <input type="text" name="AP" class="form-control" ng-model="cliente.AP" required/>
+                                                <p ng-show="clienteForm.AP.$invalid && !cliente.AP.$pristine && !fEmpresa" class="text-danger">Falta apellido paterno</p>
+                                            </div>
+                                            <div class="form-group col-md-6" ng-show="fPersona">
+                                                <label class="control-label">Apellido Materno</label>
+                                                <input type="text" name="AM" class="form-control" ng-model="cliente.AM" required/>
+                                                <p ng-show="clienteForm.AM.$invalid && !cliente.AM.$pristine && !fEmpresa" class="text-danger">Falta apellido materno</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Dirección</label>
+                                                <input type="text" name="direccion" class="form-control" ng-model="cliente.Direccion" required/>
+                                                <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta dirección</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Referencia</label>
+                                                <input type="text" name="direccion" class="form-control" ng-model="cliente.Referencia" required/>
+                                                <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta una referencia</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Celular</label>
+                                                <input type="Number" name="telefono" class="form-control" ng-model="cliente.Celular" required/>
+                                                <p ng-show="clienteForm.telefono.$invalid && !cliente.telefono.$pristine" class="text-danger">Falta Celular</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Teléfono 1</label>
+                                                <input type="Number" name="telefono2" class="form-control" ng-model="cliente.Telefono" required/>
+                                                <p ng-show="clienteForm.telefono2.$invalid && !cliente.telefono2.$pristine" class="text-danger">Falta telefono</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Teléfono 2</label>
+                                                <input type="Number" name="telefono3" class="form-control" ng-model="cliente.Telefono1" required/>
+                                                <p ng-show="clienteForm.telefono3.$invalid && !cliente.telefono3.$pristine" class="text-danger">Falta telefono</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-toggle="modal" href="#addModal" data-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" href="#addModal" data-dismiss="modal" ng-click="addCliente()" ng-show="booladd" ng-disabled="false">Agregar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal  fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <!-- Header -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                                    <h4 class="modal-title">{{encabezado}}</h4>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body">
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Sucursal</label>
+                                        <select class="form-control" ng-model="venta.IdSucursal" ng-change="tusucursal(venta.IdSucursal)">
+                                              <option style="display:none" value="">seleccionar Sucursal</option>
+                                              <option ng-repeat="option in select_sucursal.availableOptions |filter:searchText1" value="{{option._id}}">{{option.Nombre}}</option>
+                                      </select>
+                                        <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Vendedor</label>
+                                        <input disabled="true" type="text" class="form-control col-md-5" placeholder="Vendedor" ng-model="venta.NombreVendedor"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label class="control-label">Cliente</label>
+                                        <input type="text" class="form-control col-md-5" placeholder="Buscar Cliente" ng-model="searchTextc"/>
+                                        <select class="form-control" ng-model="venta.IdCliente" ng-change="tucliente(venta.IdCliente)">
+                                            <option style="display:none" value="">seleccionar Cliente</option>
+                                            <option  ng-repeat="option in select_cliente.availableOptions |filter:searchTextc" value="{{option._id}}">Nombre:  {{option.Nombre}} {{option.AP}} {{option.AM}} DNI: {{option.Dni}} / RUC: {{option.Ruc}}</option>
+                                        </select>
+                                        <button class="btn btn-success" ng-click="addinicio()" style="width: 100%" data-toggle="modal" href="#stack2" data-dismiss="modal">Nuevo Cliente</button>
+                                    </div>
+                                    <div role="tabpanel">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#uploadTab" aria-controls="uploadTab" role="tab" data-toggle="tab">Seleccionar Productos</a>
+
+                                            </li>
+                                            <li role="presentation"><a href="#browseTab" aria-controls="browseTab" role="tab" data-toggle="tab">Emitir Venta y/o cotización</a>
+
+                                            </li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="uploadTab">
+                            <form name="clienteForm" method="post">
+                                    <div class="row">
+                               <div class="form-group col-md-12">
+                                        <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                                 <h3 class="panel-title">{{encabProd}}</h3>
+                                        </div>
+                                <div class="panel-body">
+                                 <div class="row">
+                                   <div class="col-xs-4">
+                                     <h3>Pagina: {{ currentPage }}</h3>
+                                   </div>
+                                   <div class="col-xs-4">
+                                     <label for="search">Buscar:</label>
+                                     <input ng-model="q" id="search" class="form-control" placeholder="Producto a buscar">
+                                   </div>
+                                   <div class="col-xs-4">
+                                     <label for="search">items por pagina:</label>
+                                     <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                   </div>
+                                 </div>
+                                 <br>
+                                   
+                                    <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;" ng-show="showtabla">
+                                       <table class="table-rwd">
+                                               <thead>
+                                                       <tr class="success">
+                                                           <th>Agregar/Ver</th>
+                                                           <th>Codigo Producto</th>
+                                                           <th>Producto</th>
+                                                           <th>Estado</th>
+                                                           <th>Precio</th>
+               
+                                                       </tr>
+                                                   </thead>
+                                                   <tbody>
+                                                           <tr dir-paginate="dc in stockproductos | filter:q |filter:venta.IdSucursal | itemsPerPage: pageSize" current-page="currentPage" pagination-id="mealsPagination">
+                                                            <td><button class="btn btn-warning" ng-disabled="ocultar(dc.EstadoStock,dc._id)" ng-click="procesaProd(dc)">+</button><button ng-click="tuproducto2(dc.Producto)" class="btn btn-success" data-toggle="modal" href="#stack3" data-dismiss="modal">I</button></td>
+                                                            <td><label ng-show="dc.CodProducto">{{dc.CodProducto}}</label><br><label ng-show="dc.CodigoBarra">{{dc.CodigoBarra}}</label><br><label ng-show="dc.Codigo">{{dc.Codigo}}</label></td>
+                                                            <td>{{dc.Nombre}}</td>
+                                                           <td ng-style="calculateStyle(dc.EstadoStock)">{{estado_stock.availableOptions[dc.EstadoStock].name}}</td>
+                                                            <td ng-show="!dc.Sucursal">{{dc.Sucursal}}</td>
+                                                            <td>{{dc.PV}}</td>
+                                                           </tr>
+                                                   </tbody>
+                                       </table>
+                                       <pagination total-items="totalItems" ng-model="currentPage"  
+                                          max-size="5" boundary-links="true"  
+                                          items-per-page="numPerPage" class="pagination-sm">  
+                                        </pagination> 
+                                       </div>
+                               </div>
+                               </div>
+                             </div>
+                             </div>
+                           </form>
+                           </div>
+                                <div role="tabpanel" class="tab-pane" id="browseTab">
+                                            <form name="clienteForm" method="post">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-12">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">
+                                                                    <h3 class="panel-title">EMITIR VENTA</h3>
+                                                                </div>
+                                                                <div class="panel-body">
+                                                                    <div class="form-group">
+                                                                        <div class="form-group col-md-6">
+                                                                            <label class="control-label">Tipo de Pago</label>
+                                                                            <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_pago.availableOptions track by option.id" ng-model="tipo_pago.selectedOption"></select>
+                                                                            <!--<p ng-show="" class="text-danger">Selecciona el tipo de persona.</p>-->
+                                                                        </div>
+                                                                        <div class="form-group col-md-6">
+                                                                            <label class="control-label">Estado</label>
+                                                                            <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in estado_venta.availableOptions track by option.id" ng-model="estado_venta.selectedOption"></select>
+                                                                            <!--<p ng-show="" class="text-danger">Selecciona el tipo de persona.</p>-->
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;" ng-show="showtabla">
+                                                                        <table id="tableVenta" class="table-rwd">
+                                                                            <thead>
+                                                                                <tr class="success">
+
+                                                                                    <th>Codigo</th>
+                                                                                    <th>Nombre</th>
+                                                                                    <th>Cantidad</th>
+                                                                                    <th>UMedida</th>
+                                                                                    <th>Precio Total</th>
+                                                                                    <th>Eliminar</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="dc in variosproductos | orderBy:'+Nombre'" >
+                                                                                    <td ng-click="tuproducto3(dc.Codigo)" data-toggle="modal" href="#stack3" data-dismiss="modal"><label ng-show="dc.CodProducto">{{dc.CodProducto}}</label><br><label ng-show="dc.CodigoBarra">{{dc.CodigoBarra}}</label></td>
+                                                                                    <!--<td><button ng-click="tuproducto3(dc.Codigo)" class="btn btn-success" data-toggle="modal" href="#stack3" data-dismiss="modal">I</button></td>-->
+                                                                                    <td>{{dc.Nombre}}</td>
+                                                                                    <td>{{dc.Cantidad}}</td>
+                                                                                    <td>{{dc.UMedida}}</td>
+                                                                                    <td><label><input type="Number" ng-model="dc.PrecioTotal" ng-change="modifprecio()" /></label><label> {{dc.PrecioTotal}}</label></td>
+                                                                                    <td><button class="btn btn-danger" ng-click="eliminar(dc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button></td>
+                                                                                </tr>
+                                                                                <!--<tr>
+                                                                                    <td colspan="6" ng-show="variosproductos.length==0">
+                                                                                        <small><i>no exite ningun Producto!</i></small>
+                                                                                    </td>
+                                                                                </tr>-->
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="form-group col-md-3">
+                                                                            <label class="control-label">Pago</label>
+                                                                            <input type="Number" class="form-control col-md-5" placeholder="Total" ng-model="pagoo" ng-change="vuelto(pagoo)" />
+                                                                        </div>
+                                                                        <div class="form-group col-md-3">
+                                                                            <label class="control-label">Vuelto</label>
+                                                                            <input type="Number" class="form-control col-md-5" placeholder="Total" ng-model="vueltoo" disabled/>
+                                                                        </div>
+                                                                        <div class="form-group col-md-6">
+                                                                            <label class="control-label">Total a pagar</label>
+                                                                            <input type="Number" class="form-control col-md-5" placeholder="Total" ng-model="venta.Total" disabled/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="cancelar()">Cancelar</button>
+                                    <button type="button" class="btn btn-primary" ng-click="addVenta()" ng-show="booladd" ng-disabled="false">Emitir</button>
+                                    <!-- clienteForm.$invalid -->
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updVentaproducto()" ng-show="boolupd" ng-disabled="false">Actualizar</button>
+                                    <button ng-show="boolupd" class="btn btn-success" data-dismiss="modal" ng-click="generarpdf()"><span class="fa fa-print" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="stack3" class="modal fade" tabindex="-1" data-focus-on="input:first" style="display: none;">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <!-- Header -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-toggle="modal" href="#addModal" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                    <h4 class="panel-title">PRODUCTO</h4>
+                                </div>
+                                <!-- Body -->
+                                <div class="modal-body">
+                                    <form name="clienteForm" method="post">
+                                        <div class="row">
+
+                                            <div ng-show="seleccionar" class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">Seleccionar producto existente</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="form-group">
+                                                        <div class="form-group col-md-12">
+                                                            <label class="control-label">Producto</label>
+                                                            <input type="text" class="form-control" placeholder="Buscar producto" ng-model="searchText1" />
+                                                            <select class="form-control" ng-model="Producto1" ng-change="tuproducto1(Producto1)">
+                                                                                    <option style="display:none" value="">seleccionar Producto</option>
+                                                                                    <!--<option style="display:none" value=""></option>-->
+                                                                                    <option ng-repeat="option in select_producto.availableOptions |filter:searchText1" value="{{option._id}}">
+                                                                                    {{option.Nombre}} 
+                                                                                    </option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-3">
+                                                <label class="control-label">Categoria del producto</label>
+                                                <select class="form-control" ng-model="producto.tipo" disabled>
+                                                            <option style="display:none" value="">seleccionar categoria</option>
+                                                            <!--<option style="display:none" value=""><input type="text" class="form-control" placeholder="Buscar contratante" ng-model="searchText1"> </input></option>-->
+                                                            <option ng-repeat="option in tipo_producto.availableOptions |filter:searchText1" value="{{option._id}}">{{option.nombre}}</option>
+                                                    </select>
+                                                <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label class="control-label">Codigo producto</label>
+                                                <input type="text" name="Codigo" class="form-control" ng-model="producto.Codigo" disabled required/>
+                                                <p ng-show="clienteForm.Codigo.$invalid && !producto.Codigo.$pristine && !fPersona" class="text-danger">Falta el codigo del producto</p>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Nombre del producto</label>
+                                                <input ng-disabled="!caracteristicaa" type="text" name="Nombre" class="form-control" ng-model="producto.Nombre" required/>
+                                                <p ng-show="clienteForm.Nombre.$invalid && !producto.Nombre.$pristine && !fPersona" class="text-danger">Escriba el nombre del producto</p>
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Características y descripción del producto</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div ng-show="caracteristicaa" class="form-group">
+                                                            <div class="form-group col-md-6">
+                                                                <label class="control-label">Caraterística</label>
+                                                                <input type="text" name="Caracteris" class="form-control" ng-model="Descripcion.Caracteristica" required/>
+                                                                <p ng-show="clienteForm.Caracteris.$invalid && !Descripcion.Caracteristica.$pristine && !fPersona" class="text-danger">Escriba el nombre del producto</p>
+                                                                <h4>Característica: {{Descripcion.Caracteristica}}</h4>
+                                                            </div>
+                                                            <div class="form-group col-md-6">
+                                                                <label class="control-label">Descripción</label>
+                                                                <input type="text" name="descripcion" class="form-control" ng-model="Descripcion.Descripcion" required/>
+                                                                <p ng-show="clienteForm.descripcion.$invalid && !Descripcion.Descripcion.$pristine && !fPersona" class="text-danger">Escriba el nombre del producto</p>
+                                                                <h4>Descripción: {{Descripcion.Descripcion}}</h4>
+                                                            </div>
+                                                            <div class="form-group col-md-6">
+                                                                <button class="btn btn-primary" id="addBtn" ng-click="adddescripcion(Descripcion)" ng-show="showAddBtn">Agregar</button>
+                                                                <button class="btn btn-info" id="updateBtn" ng-click="modificar(Descripcion)" ng-show="showUpdateBtn">Actualizar</button>
+                                                                <!--<button class="btn btn-info" id="clearBtn" ng-click="eliminar(ParteUsada)" ng-show="showDeleteBtn">Eliminar</button>-->
+                                                                <button class="btn btn-default" id="closeBtn" ng-click="cancelar()">Cancelar</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;">
+                                                            <table class="table-rwd">
+                                                                <thead>
+                                                                    <tr class="success">
+                                                                        <th>Eliminar</th>
+                                                                        <th>Característica</th>
+                                                                        <th>Descripción</th>
+                                                                        <!--<th>Editar</th>-->
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr ng-repeat="dc in Descripciones | orderBy:'+Caracteristica'">
+
+                                                                        <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                                                                        <td><button ng-disabled="!caracteristicaa" class="btn btn-danger" ng-click="eliminar(dc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button></td>
+                                                                        <td><input ng-disabled="!caracteristicaa" type="text" ng-model="dc.Caracteristica" class="form-control" required /></td>
+                                                                        <td> <input ng-disabled="!caracteristicaa" type="text" ng-model="dc.Descripcion" class="form-control" required /></td>
+                                                                        <!--<td><button class="btn btn-warning" ng-click="procesacaract(dc)">Editar</button></td>-->
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="4" ng-show="Descripciones.length==0">
+                                                                            <small><i>no exite ninguna Caracteristica!</i></small>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Estado del producto</label>
+                                                    <select ng-disabled="!caracteristicaa" class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_estado.availableOptions track by option.id" ng-model="tipo_estado.selectedOption"></select>
+                                                    <p ng-show="" class="text-danger">Seleccione la sucursal.</p>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Unidad de medida</label>
+                                                    <input ng-disabled="!caracteristicaa" type="text" name="um" class="form-control" ng-model="producto.UMedida" required/>
+                                                    <p ng-show="clienteForm.um.$invalid && !producto.UMedida.$pristine" class="text-danger">ingrese la unidad de medida</p>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Precio de Compra base</label>
+                                                    <input ng-disabled="!caracteristicaa" type="Number" name="telefono2" class="form-control" ng-model="producto.PC" required/>
+                                                    <p ng-show="clienteForm.telefono2.$invalid && !producto.PC.$pristine" class="text-danger">ingrese el precio de compra</p>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Precio de Venta sugerido</label>
+                                                    <input ng-disabled="!caracteristicaa" type="Number" name="telefono3" class="form-control" ng-model="producto.PV" required/>
+                                                    <p ng-show="clienteForm.telefono3.$invalid && !producto.PV.$pristine" class="text-danger">ingrese el precio de venta</p>
+                                                </div>
+                                            </div>
+                                    </form>
+                                    </div>
+                                    <!-- Footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" href="#addModal" data-dismiss="modal" ng-show="!caracteristicaa">Salir</button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" href="#addModal" data-dismiss="modal" ng-click="cancelar11()" ng-show="caracteristicaa">Cancelar</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" href="#addModal" ng-click="addProducto()" ng-disabled="false" ng-show="caracteristicaa">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-center">
+    <!-- <a class="btn btn-default" href="#"><i class="ion-social-github"></i> GoPlanr project</a>-->
+</div>

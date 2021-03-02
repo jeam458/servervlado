@@ -1,0 +1,102 @@
+<div class="container col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Gráficos</strong>
+
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class=" form-group  col-md-12 ">
+                        <h4>Reporte de productos en stock por sucursal</h4>
+                        <div class="form-group col-md-12">
+                            <label class="control-label"> Sucursal</label>
+                            <select class="form-control" ng-model="Sucursal1" ng-change="stockxsuc(Sucursal1)">
+                                      <option style="display:none" value="">seleccionar Sucursal</option>
+                                      <!--<option style="display:none" value=""><input type="text" class="form-control" placeholder="Buscar contratante" ng-model="searchText1"> </input></option>-->
+                                      <option ng-repeat="option in select_sucursal.availableOptions" value="{{option._id}}">{{option.Nombre}}</option>
+                              </select>
+
+                        </div>
+                        <div class="form-group col-md-6" ng-show="mostrar">
+                            <h4 style="text-align: center">Gráfica de Productos en la sucursal</h4>
+                            <zingchart id="myChart" zc-json="myJson" zc-height=5 00 zc-width=6 00></zingchart>
+                        </div>
+
+                        <div ng-show="mostrar" class=" form-group  col-md-6 " style="overflow-x:auto;">
+                            <h4 style="text-align: center">Tabla de Productos en la sucursal</h4>
+                            <table class="table-rwd">
+                                <thead>
+                                    <tr class="success">
+                                        <th ng-repeat="cabecera in cabecera_stockproducto">{{cabecera}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="sc in stocks | orderBy:'+Fecha' |filter:searchText  ">
+                                        <td>{{sc.CodigoBarra}}</td>
+                                        <td>{{sc.fecha|date:format:timezone}}</td>
+                                        <td>{{sc.Nombre}}</td>
+                                        <td>{{sc.Stock}}</td>
+                                        <td>{{sc.UMedida}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!--<div class="form-group col-md-12" ng-show="mostrar">
+                            <label class="control-label">Producto</label>
+                            <select class="form-control" ng-model="Producto1" ng-change="">
+                                          <option style="display:none" value="">seleccionar Sucursal</option>
+                                          
+                                          <option ng-repeat="option in select_producto.availableOptions" value="{{option._id}}">{{option.Nombre}}</option>
+                                  </select>
+
+                        </div>-->
+
+
+                        <div ng-show="disable" class="form-group col-md-6">
+                            <label class="control-label">Venta a Buscar</label>
+                            <input type="text" class="form-control col-md-5" placeholder="Buscar producto" ng-model="searchText" />
+                        </div>
+
+                        <div class="form-group col-md-2" ng-show="disable">
+                            <label class="control-label">Listar Productos</label>
+                            <button type="submit" class="btn btn-primary" ng-click="stockproductos111()">Listar Productos</button>
+                        </div>
+                    </div>
+                    <div class=" form-group  col-md-12 ">
+
+                    </div>
+                    <div ng-show="disable" class=" form-group  col-md-12 " style="overflow-x:auto;">
+                        <table class="table-rwd">
+                            <thead>
+                                <tr class="success">
+                                    <th ng-repeat="cabecera in cabecera_stockproducto">{{cabecera}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="sc in ventas | orderBy:'+Nombre' |filter:searchText |filter:Sucursal1  ">
+
+                                    <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                                    <td>{{sc.NroFactura}}</td>
+                                    <td>{{sc.fecha|date:format:timezone}}</td>
+                                    <td>{{sc.NombreCliente}}</td>
+                                    <td>{{sc.NombreVendedor}}</td>
+                                    <td ng-show="sc.NombreSucursal">{{sc.NombreSucursal}}</td>
+                                    <td ng-style="calculateStyle(sc.Estado)">{{estado_venta.availableOptions[sc.Estado].name}}</td>
+                                    <td>{{sc.Total}}</td>
+                                    <td><button class="btn btn-success" data-toggle="modal" data-target="#addModal" ng-click="actualizar(sc)"><span class="fa fa-print" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(sc)"><span class="fa fa-pencil" style="margin: 5px 5px 5px 5px;float: left; " aria-hidden="true"></span></button>
+                                        <button class="btn btn-danger" ng-click="delventaproducto(sc)"><span class="fa fa-trash" style="margin: 5px 5px 5px 5px;float: left; "  aria-hidden="true"></span></button>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

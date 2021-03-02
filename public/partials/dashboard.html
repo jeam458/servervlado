@@ -1,0 +1,49 @@
+<div id="page-wrapper" ng-class="{'open': toggle}" ng-cloak>
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper" style="margin-top: -25px;">
+        <ul class="sidebar">
+            <li class="sidebar-main">
+                <a ng-click="toggleSidebar()">
+          Mantenimientos
+          <span class="menu-icon glyphicon glyphicon-transfer"></span>
+        </a>
+            </li>
+            <li class="sidebar-title"><span>Navegación</span></li>
+            <!--<li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.producto">Tipos Productos<span class="menu-icon fa fa-archive"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.tipo">Categorias<span class="menu-icon fa fa-yelp"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.sucursal">Sucursales<span class="menu-icon fa fa-building"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.proveedor">Proveedores<span class="menu-icon fa fa-university"></span></a>
+            </li>-->
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.padron">Insertar Padron<span class="menu-icon fa fa-building"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.sendmails">Enviar Correos<span class="menu-icon fa fa-building"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.addpartidos">Partidos<span class="menu-icon fa fa-archive"></span></a>
+            </li>
+            <!--<li class="sidebar-list">
+                <a ui-sref="dashboard.cliente">Clientes<span class="menu-icon fa fa-users"></span></a>
+            </li>-->
+            <!--<li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.alta">Tareas<span class="menu-icon fa fa-briefcase"></span></a>
+            </li>-->
+            <li class="sidebar-list">
+                <a ui-sref="dashboard.profile">Mi perfil <span class="menu-icon fa fa-user"></span></a>
+            </li>
+            <li class="sidebar-list" ng-show="mostrar">
+                <a ui-sref="dashboard.accesos">Accesos<span class="menu-icon fa fa-street-view"></span></a>
+            </li>
+        </ul>
+    </div>
+    <!-- End Sidebar -->
+    <div ui-view="dashboardContent"></div>
+</div>

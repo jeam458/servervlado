@@ -1,0 +1,124 @@
+<div class="container col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">Seleccione la mejor opcion</div>
+        <div class="panel-body">
+            <div class="row">
+                <div ng-repeat="m in partidos">
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="card" >
+                                <img class="card-img-top" style="width: 100%;" src="http://placehold.it/380?text=1" alt="Card image cap">
+                                <div class="card-body" style="text-align: center; margin-bottom: 10px;">
+                                  <h5 class="card-title">{{m.Nombre}}</h5>
+                                  <p class="card-text">{{m.Descripcion}}</p>
+                                  
+                                </div>
+                                <div class="card-footer" style="text-align: center; margin-bottom: 10px;">
+                                    <div class="row">
+                                       <div class="col-md-6 col-sm-12">
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="mostrarInfo(m)" >Ver Información</button>
+                                       </div>
+                                       <div class="col-md-6 col-sm-12">
+                                        <button class="btn btn-success" data-toggle="modal" data-target="#addModal1" ng-click="verificarVoto(m)">Elegir opción</button>
+                                       </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="exampleModalLabel">{{encabezado}}</h4>
+            </div>
+            <div class="modal-body">
+                <form name="partidoForm" method="post">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="control-label">Nombre</label>
+                            <input type="text" name="Nombre" class="form-control" ng-model="partido.Nombre" required/>
+                            <p ng-show="partidoForm.Nombre.$invalid && !partidoForm.Nombre.$pristine" class="text-danger">Falta nombre</p>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label class="control-label">Descripción</label>
+                            <textarea type="text" name="Descripcion" class="form-control" ng-model="partido.Descripcion" required></textarea>
+                            <p ng-show="partidoForm.Descripcion.$invalid && !partidoForm.Descripcion.$pristine" class="text-danger">Falta Descripción</p>
+                        </div>
+                        
+                        <div class="form-group col-md-12" style="overflow-x:auto;">
+                            <label class="control-label">Lista de integrantes</label>
+                            <table class="table-rwd" >
+                                        <thead>
+                                            <tr class="success">
+                                                <th style="width:5%">DNI</th>
+                                                <th style="width:10%">Nombre</th>
+                                                <th style="width:10%">Paterno</th>
+                                                <th style="width:10%">Materno</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr ng-repeat="dc in integrantes " current-page="currentPage">
+                                                 <td style="width:5%">{{dc.Dni}}</td>
+                                                 <td style="width:10%">{{dc.Nombre}}</td>
+                                                 <td style="width:10%">{{dc.AP}}</td>
+                                                 <td style="width:10%">{{dc.AM}}</td>
+                                                </tr>
+                                        </tbody>
+                            </table>
+                            <!--<pagination total-items="totalItems" ng-model="currentPage"  
+                               max-size="5" boundary-links="true"  
+                               items-per-page="numPerPage" class="pagination-sm">  
+                             </pagination>--> 
+                            </div>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default"  data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="addModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>-->
+                <h4 class="modal-title" id="exampleModalLabel">{{encabezado}}</h4>
+            </div>
+            <div class="modal-body">
+                <form name="partidoForm" method="post">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="control-label">Nombre</label>
+                            <input disabled type="text" name="Nombre" class="form-control" ng-model="partido.Nombre" required/>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label class="control-label">Descripción</label>
+                            <textarea disabled type="text" name="Descripcion" class="form-control" ng-model="partido.Descripcion" required></textarea>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning"  data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-success"  data-dismiss="modal" ng-click="addVoto()" >Confirmar voto</button>
+            </div>
+        </div>
+    </div>
+</div>

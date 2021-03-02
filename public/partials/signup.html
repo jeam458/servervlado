@@ -1,0 +1,83 @@
+<div class="container col-md-offset-4 col-md-4">
+    <div class="row">
+        <div class="panel">
+            <div class="panel-body">
+                <h2 class="text-center">Registrar Nuevo Usuario</h2>
+
+                <form method="post" ng-submit="signup()" name="signupForm">
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.nombres.$invalid && signupForm.nombres.$dirty }">
+                        <input class="form-control input-lg" type="text" name="nombres" ng-model="user.nombres" placeholder="Nombres" required autofocus>
+                        <span class="ion-person form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.nombres.$dirty" ng-messages="signupForm.nombres.$error">
+                            <div ng-message="required">Debe ingresar su nombre completo.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.apellidos.$invalid && signupForm.apellidos.$dirty }">
+                        <input class="form-control input-lg" type="text" name="apellidos" ng-model="user.apellidos" placeholder="Apellidos" required autofocus>
+                        <span class="ion-person form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.apellidos.$dirty" ng-messages="signupForm.apellidos.$error">
+                            <div ng-message="required">Debe ingresar sus Apellidos.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.celular.$invalid && signupForm.celular.$dirty }">
+                        <input class="form-control input-lg" type="Number" name="celular" ng-model="user.celular" placeholder="Nro telefónico" required autofocus>
+                        <span class="ion-ios-telephone form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.celular.$dirty" ng-messages="signupForm.celular.$error">
+                            <div ng-message="required">Debe ingresar su Nro telefónico.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.tipo.$invalid && signupForm.tipo.$dirty }">
+                        <select class="form-control input-lg" name="tipo" required ng-model="user.tipo" class="selectpicker" ng-options="tipo as tipo for tipo in tipos" required autofocus>
+                                <option style="display:none" value="">tipo usuario</option>
+                        </select>
+                        <!--<input class="form-control input-lg" type="text" name="tipo" ng-model="user.tipo" placeholder="Tipo" required autofocus>-->
+                        <span class="ion-ios-keypad form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.tipo.$dirty" ng-messages="signupForm.tipo.$error">
+                            <div ng-message="required">Debe seleccionar un tipo.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.email.$invalid && signupForm.email.$dirty }">
+                        <input class="form-control input-lg" type="email" id="email" name="email" ng-model="user.email" placeholder="Correo" required>
+                        <span class="ion-at form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.email.$dirty" ng-messages="signupForm.email.$error">
+                            <div ng-message="required">Correo es requerido.</div>
+                            <div ng-message="pattern">Correo incorrecto.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.password.$invalid && signupForm.password.$dirty }">
+                        <input password-strength class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Contraseña" required>
+                        <span class="ion-key form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.password.$dirty" ng-messages="signupForm.password.$error">
+                            <div ng-message="required">Contraseña requerida.</div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback" ng-class="{ 'has-error' : signupForm.confirmPassword.$invalid && signupForm.confirmPassword.$dirty }">
+                        <input password-match="user.password" class="form-control input-lg" type="password" name="confirmPassword" ng-model="user.confirmPassword" placeholder="Confirmar contraseña">
+                        <span class="ion-key form-control-feedback"></span>
+
+                        <div class="help-block text-danger" ng-if="signupForm.confirmPassword.$dirty" ng-messages="signupForm.confirmPassword.$error">
+                            <div ng-message="compareTo">Contraseña debe coicidir.</div>
+                        </div>
+                    </div>
+                    <p class="text-center text-muted">
+                        <small>Al hacer click en registrar. usted acepta los <a href="#">términos & condiciones</a> y la <a href="#">privacidad
+                            politica de SisVentas Cusco</a></small>
+                    </p>
+                    <button type="submit" ng-disabled="signupForm.$invalid" class="btn btn-lg btn-block btn-primary">
+                        Registrar
+                    </button>
+                    <br/>
+
+                    <p class="text-center text-muted">SisVentas Cusco
+                        <!--<a href="/#/login">Log in now</a>--></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

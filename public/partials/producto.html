@@ -1,0 +1,200 @@
+<div class="container col-md-12 col-md-offset-0">
+
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard" style="margin: -2px 5px 10px 10px;float: left; "></i>Lista de tipos de Productos</legend>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+        <div>
+
+        </div>
+        <div class="has-feedback">
+            <div class=" form-group  col-md-8 ">
+                <input type="text" class="form-control col-md-5" placeholder="Buscar Producto" ng-model="searchText">
+                </input>
+                <span class="glyphicon glyphicon-search form-control-feedback" style="margin: -5px 10px 10px 10px;float: left; "></span>
+            </div>
+            <div class="form-group col-md-4 col-md-offset-0">
+                <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Agregar Nuevo tipo Producto</button>
+            </div>
+        </div>
+
+        <h4>Listado de todos los productos</h4>
+        <div style="overflow-x:auto;">
+            <table class="table-rwd">
+                <thead>
+                    <tr class="success">
+                        <th ng-repeat="cabecera in cabecera_producto">{{cabecera}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="pr in productos | orderBy:'+Nombre && Estado' |filter:searchText">
+
+                        <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                        <td><label ng-show="pr.Nombre">{{pr.Nombre}}</label><br><label ng-show="pr.Codigo">{{pr.Codigo}}</label></td>
+                        <td>{{pr.UMedida}}</td>
+                        <td>{{pr.PC}}</td>
+                        <td>{{pr.PV}}</td>
+                        <td>{{tipo_estado.availableOptions[pr.Estado].name}}</td>
+                        <td>{{pr.fecha| date : format : timezone}}</td>
+                        <td><button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(pr)">Editar</button></td>
+                        <td><button class="btn btn-danger" ng-click="delProducto(pr)">Eliminar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        <h4 class="panel-title">{{encabezado}}</h4>
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form name="clienteForm" method="post">
+                            <div class="row">
+
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Categoria del producto</label>
+                                    <select class="form-control" ng-model="producto.tipo">
+                                            <option style="display:none" value="">seleccionar categoria</option>
+                                            <!--<option style="display:none" value=""><input type="text" class="form-control" placeholder="Buscar contratante" ng-model="searchText1"> </input></option>-->
+                                            <option ng-repeat="option in tipo_producto.availableOptions |filter:searchText1" value="{{option._id}}">{{option.nombre}}</option>
+                                    </select>
+                                    <!--<p ng-show="clienteForm.mySelect1.$invalid && !producto.tipo.$pristine" class="text-danger">Selecciona la categoria del producto.</p>-->
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Codigo producto</label>
+                                    <input type="text" name="Codigo" class="form-control" ng-model="producto.Codigo" required/>
+                                    <p ng-show="clienteForm.Codigo.$invalid && !producto.Codigo.$pristine && !fPersona" class="text-danger">Falta el codigo del producto</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Nombre del producto</label>
+                                    <input type="text" name="Nombre" class="form-control" ng-model="producto.Nombre" required/>
+                                    <p ng-show="clienteForm.Nombre.$invalid && !producto.Nombre.$pristine && !fPersona" class="text-danger">Falta el nombre del producto</p>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Características y descripción del producto</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Caraterística</label>
+                                                    <input type="text" name="Caracteris" class="form-control" ng-model="Descripcion.Caracteristica" required/>
+                                                    <p ng-show="clienteForm.Caracteris.$invalid && !Descripcion.Caracteristica.$pristine && !fPersona" class="text-danger">Escriba el nombre del producto</p>
+                                                    <h4>Característica: {{Descripcion.Caracteristica}}</h4>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Descripción</label>
+                                                    <input type="text" name="descripcion" class="form-control" ng-model="Descripcion.Descripcion" required/>
+                                                    <p ng-show="clienteForm.descripcion.$invalid && !Descripcion.Descripcion.$pristine && !fPersona" class="text-danger">Escriba el nombre del producto</p>
+                                                    <h4>Descripción: {{Descripcion.Descripcion}}</h4>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <button class="btn btn-primary" id="addBtn" ng-click="adddescripcion(Descripcion)" ng-show="showAddBtn">Agregar</button>
+                                                    <button class="btn btn-info" id="updateBtn" ng-click="modificar(Descripcion)" ng-show="showUpdateBtn">Actualizar</button>
+                                                    <!--<button class="btn btn-info" id="clearBtn" ng-click="eliminar(ParteUsada)" ng-show="showDeleteBtn">Eliminar</button>-->
+                                                    <button class="btn btn-default" id="closeBtn" ng-click="cancelar()">Cancelar</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-12 col-md-offset-0" style="overflow-x:auto;">
+                                                <table class="table-rwd">
+                                                    <thead>
+                                                        <tr class="success">
+                                                            <th>Característica</th>
+                                                            <th>Descripción</th>
+                                                            <th>Editar</th>
+                                                            <th>Eliminar</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="dc in Descripciones | orderBy:'+Caracteristica'">
+
+                                                            <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                                                            <td>{{dc.Caracteristica}}</td>
+                                                            <td>{{dc.Descripcion}}</td>
+                                                            <td><button class="btn btn-warning" ng-click="procesacaract(dc)">Editar</button></td>
+                                                            <td><button class="btn btn-danger" ng-click="eliminar(dc)">Eliminar</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4" ng-show="Descripciones.length==0">
+                                                                <small><i>no exite ninguna Caracteristica!</i></small>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Estado del producto</label>
+                                        <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_estado.availableOptions track by option.id" ng-model="tipo_estado.selectedOption"></select>
+                                        <p ng-show="" class="text-danger">Seleccione la sucursal.</p>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Unidad de medida</label>
+                                        <input type="text" name="um" class="form-control" ng-model="producto.UMedida" required/>
+                                        <p ng-show="clienteForm.um.$invalid && !producto.UMedida.$pristine" class="text-danger">ingrese la unidad de medida</p>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Precio de Compra referencial</label>
+                                        <input type="Number" name="telefono2" class="form-control" ng-model="producto.PC" required/>
+                                        <p ng-show="clienteForm.telefono2.$invalid && !producto.PC.$pristine" class="text-danger">ingrese el precio de compra</p>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label">Precio de Venta referencial</label>
+                                        <input type="Number" name="telefono3" class="form-control" ng-model="producto.PV" required/>
+                                        <p ng-show="clienteForm.telefono3.$invalid && !producto.PV.$pristine" class="text-danger">ingrese el precio de venta</p>
+                                    </div>
+                                    <div class="form-group col-md-12" ng-if="mostrarImg">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Imagen del producto</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <div class="form-group col-md-6">
+
+                                                        <label class="control-label">Imagen</label>
+                                                        <input type="file" id="trigger" class="btn btn-primary btn-block" onchange="angular.element(this).scope().setFile(this)" accept="image/*" nv-file-select uploader="uploader" options="uploadOptions">
+                                                        <br>
+                                                        <button ng-click="subir()" ng-show="imageen" class="btn btn-success btn-block">Subir Imagen</button>
+                                                        <div ng-show="uploader.isHTML5" class="progress" style="margin-top: 0;">
+                                                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+
+                                                        <img ng-src="{{imageen}}" ng-show="imageen" alt="tu imagen" style="height: 100%; width: 100%; position: relative">
+                                                        <!--<img id="photo" src="#" alt="tu imagen" style="height: 40%; width: 60%; position: relative">-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </form>
+                        </div>
+                        <!-- Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="addProducto()" ng-show="booladd" ng-disabled="false">Agregar</button>
+                            <!-- clienteForm.$invalid -->
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updProducto()" ng-show="boolupd" ng-disabled="false">Actualizar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

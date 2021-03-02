@@ -1,0 +1,50 @@
+<div class="container col-md-12">
+
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard"></i> Editar mi perfil</legend>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+
+        <div ng-hide="isProfileLoading">
+            <form name="profileForm" method="post" ng-submit="updateProfile()" novalidate>
+                <div class="col-md-4 col-md-offset-0">
+                    <div class="form-group">
+                        <label class="control-label">Imagen de perfil</label>
+                        <img class="profile-picture" ng-src="{{user.picture || 'https://placehold.it/100x100'}}">
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-0">
+
+                    <div class="form-group">
+                        <label class="control-label"><i class="ion-person"></i> Nombres</label>
+                        <input type="text" name="name" class="form-control" ng-model="user.nombres" required/>
+
+                        <p ng-show="profileForm.name.$invalid && !profileForm.name.$pristine" class="text-danger">Su nombre es necesario.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><i class="ion-person"></i> Apellidos</label>
+                        <input type="text" name="apellidos" class="form-control" ng-model="user.apellidos" required/>
+
+                        <p ng-show="profileForm.apellidos.$invalid && !profileForm.apellidos.$pristine" class="text-danger">Sus apellidos es necesario.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><i class="ion-person"></i>Celular</label>
+                        <input type="Number" name="apellidos" class="form-control" ng-model="user.celular" required/>
+
+                        <p ng-show="profileForm.apellidos.$invalid && !profileForm.apellidos.$pristine" class="text-danger">Su Celular es necesario.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><i class="ion-at"></i> Correo electrónico</label>
+                        <input type="email" class="form-control" ng-model="user.email" ng-disabled="true" />
+                    </div>
+                </div>
+                <button class="btn btn-lg btn-success" ng-disabled="profileForm.$invalid">Actualizar información</button>
+            </form>
+        </div>
+    </div>
+
+</div>

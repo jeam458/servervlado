@@ -1,0 +1,119 @@
+<div class="container col-md-12 col-md-offset-0">
+
+    <div class="panel panel-default panel-body" style="min-height: 400px;">
+        <legend><i class="ion-clipboard" style="margin: -2px 5px 10px 10px;float: left; "></i>Lista de Sucursales</legend>
+        <div class="loading" ng-show="isProfileLoading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+        <div>
+
+        </div>
+        <div class="has-feedback">
+            <div class=" form-group  col-md-8 ">
+                <input type="text" class="form-control col-md-5" placeholder="Buscar Sucursal" ng-model="searchText">
+                </input>
+                <span class="glyphicon glyphicon-search form-control-feedback" style="margin: -5px 10px 10px 10px;float: left; "></span>
+            </div>
+            <div class="form-group col-md-4 col-md-offset-0">
+                <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addModal" ng-click="agregar()">Agregar Nueva Sucursal</button>
+            </div>
+        </div>
+
+        <h4>Listado de todas las sucursales</h4>
+        <div style="overflow-x:auto;">
+            <table class="table-rwd">
+                <thead>
+                    <tr class="success">
+                        <th ng-repeat="cabecera in cabecera_sucursal">{{cabecera}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="sc in sucursales | orderBy:'+Nombre' |filter:searchText">
+
+                        <!--<td ng-show="cl.Ruc">{{cl.Ruc}}</td>-->
+                        <td>{{sc.Nombre}}</td>
+                        <td>{{sc.Gerente}}</td>
+                        <td>{{sc.Direccion}}</td>
+                        <td>{{sc.Encargado}}</td>
+                        <td>{{tipo_sucursal.availableOptions[sc.tipo].name}}</td>
+                        <td>{{sc.fecha| date : format : timezone}}</td>
+                        <td><button class="btn btn-warning" data-toggle="modal" data-target="#addModal" ng-click="actualizar(sc)">Editar</button></td>
+                        <td><button class="btn btn-danger" ng-click="delSucursal(sc)">Eliminar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                        <h4 class="modal-title">{{encabezado}}</h4>
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form name="clienteForm" method="post">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Tipo Sucursal</label>
+                                    <select class="form-control" name="mySelect" id="mySelect" ng-options="option.name for option in tipo_sucursal.availableOptions track by option.id" ng-model="tipo_sucursal.selectedOption"></select>
+                                    <p ng-show="" class="text-danger">Selecciona el tipo de persona.</p>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Sucursal</label>
+                                    <input type="text" name="empresa" class="form-control" ng-model="sucursal.Nombre" required/>
+                                    <p ng-show="clienteForm.empresa.$invalid && !cliente.empresa.$pristine && !fPersona" class="text-danger">Escriba el nombre de la sucursal</p>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label class="control-label">Nombre Gerente</label>
+                                    <input type="text" name="gerente" class="form-control" ng-model="sucursal.Gerente" required/>
+                                    <p ng-show="clienteForm.gerente.$invalid && !cliente.gerente.$pristine && !fPersona" class="text-danger">Escriba el nombre del gerente</p>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="control-label">Encargado</label>
+                                    <input type="text" name="encargado" class="form-control" ng-model="sucursal.Encargado" required/>
+                                    <p ng-show="clienteForm.encargado.$invalid && !cliente.encargado.$pristine && !fPersona" class="text-danger">Escriba el nombre del encargado</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Dirección</label>
+                                    <input type="text" name="direccion" class="form-control" ng-model="sucursal.Direccion" required/>
+                                    <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta dirección</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Referencia</label>
+                                    <input type="text" name="direccion" class="form-control" ng-model="sucursal.Referencia" required/>
+                                    <p ng-show="clienteForm.direccion.$invalid && !cliente.direccion.$pristine" class="text-danger">Falta una referencia</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Teléfono 1</label>
+                                    <input type="Number" name="telefono2" class="form-control" ng-model="sucursal.Telefono1" required/>
+                                    <p ng-show="clienteForm.telefono2.$invalid && !cliente.telefono2.$pristine" class="text-danger">Falta telefono</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Teléfono 2</label>
+                                    <input type="Number" name="telefono3" class="form-control" ng-model="sucursal.Telefono2" required/>
+                                    <p ng-show="clienteForm.telefono3.$invalid && !cliente.telefono3.$pristine" class="text-danger">Falta telefono</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="addSucursal()" ng-show="booladd" ng-disabled="false">Agregar</button>
+                        <!-- clienteForm.$invalid -->
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updSucursal(sc)" ng-show="boolupd" ng-disabled="false">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
